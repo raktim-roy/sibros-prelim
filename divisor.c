@@ -11,17 +11,26 @@ bool poweroftwo(unsigned num)
 
 static unsigned quotient (unsigned num, unsigned div)
 {
-    if (num == 0 && div == 0) return -1;
-    unsigned quotient = 0;
-    while (num >= div)
+    //Check the largest n such that div >= 2^n, and assign the n to nthpwr
+    int nthpwr = 0;
+    
+    for (int i = 0; i < 32; i++)
     {
-        num = num - div ;
-        quotient++ ;
+        if (((1 << i) & div) != 0)
+            nthpwr = i;
     }
-    return quotient ;
-    
-    
+
+    //So that num could only contain 2^(31-nthpwr) many div's
+    unsigned int res = 0;
+    for (int i = 31 - nthpwr; i >= 0; i--){
+        if ((div << i) <= num){
+            res += (1 << i);
+            num -= (div << i);
+        }
+    }
+    return res;
 }
+
 
 static unsigned modulo (unsigned num, unsigned div) {
     
@@ -40,12 +49,11 @@ static unsigned modulo (unsigned num, unsigned div) {
     
 }
 
-
-
 typedef struct {
     unsigned quotient;
     unsigned remainder;
 } divider_s;
+
 // Implement (with all possible error checks)
 void divide(divider_s* answer, unsigned number, unsigned divide_by)
 {
@@ -63,11 +71,11 @@ void divide(divider_s* answer, unsigned number, unsigned divide_by)
     return;
 }
 
+
 int main()
 {
-
     divider_s test = {.quotient = 0,.remainder = 0};
-    divide(&test, 1029, 24);
+    divide(&test, 33, 16);
     printf("%u\n", test.quotient);
     printf("%u\n", test.remainder);
 }
